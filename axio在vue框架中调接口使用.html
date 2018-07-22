@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- a标签内部是不能嵌套A标签 -->
+    <!-- <a href="#">我是A <a href="#">内部的A</a> </a> -->
+    <div id="app">
+        <weather-box></weather-box>
+        <weather-box></weather-box>
+        <weather-box></weather-box>
+        <weather-box></weather-box>
+        <weather-box></weather-box>
+        <weather-box></weather-box>
+    </div>
+</body>
+
+</html>
+<script src="./lib/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<!-- 模板 -->
+<script type="text/html" id="weather">
+    <div>
+        <input type="text" v-model="search" placeholder="回车查询" @keyup.enter="searchWeatch">
+        <ul>
+            <li v-for="(item, index) in weatherList">
+                {{item.date}}--{{item.high}}--{{item.low}}--{{item.fengxiang}}
+            </li>
+        </ul>
+    </div>
+</script>
+<script>
+    /*
+        vue的使用ajax获取数据 可以使用如下方法
+            原生
+            自己封装了一下
+            $.ajax
+        vue中如果要通过ajax获取数据
+            官方推出 只能在vue中使用
+                vue-resource vue内部提供的一个通过ajax获取数据的 js库
+                vue-resource 只能集成在vue中 需要导入了vue之后才可以导入
+            第三方推出 可以用在任何的地方 (不仅仅只有浏览器哦,node.js中也可以用(服务器调接口))
+                axios 
+      问及
+        vue 跟jQ能不能结合使用?          
+
+    */
+
+    // 1.注册组件
+    Vue.component('weather-box', {
+        data: function () {
+            return {
+                weatherList: [],
+                search: ''
+            }
+        },
+        template: '#weather',
+        methods: {
+            searchWeatch() {
+                // axios.get(`http://wthrcdn.etouch.cn/weather_mini?city=${this.search}`)
+                axios.get(`http://wthrcdn.etouch.cn/weather_mini?city=${this.search}`)
+                    // 成功执行
+                    .then((response) => {
+                        console.log(response);
+                        this.weatherList = response.data.data.forecast;
+                    })
+                    // 失败执行
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            }
+        }
+    })
+
+    // 2.实例化
+    let app = new Vue({
+        el: '#app',
+       
+    })
+
+
+</script>
